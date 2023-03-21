@@ -1,3 +1,9 @@
+use rand::Rng;
+use crate::util::Coord;
+use crate::tree::*;
+use crate::cell::*;
+use crate::genome::*;
+
 #[derive(Debug)]
 pub struct WorldState {
     pub trees: Vec<Tree>,
@@ -23,39 +29,32 @@ impl WorldState {
             }
         }
     }
-}
 
-#[derive(Debug)]
-pub enum CellType {
-    Branch,
-    Shoot,
-    Seed
-}
-#[derive(Debug)]
-pub struct Coord(i32, i32);
+    pub fn add_trees(&mut self) {
+        let mut rng = rand::thread_rng();
+        for x in 0..self.width {
+            if 0 == rng.gen::<u8>()%3 {
+                let mut genes = Vec::new();
+                for _g in 0..32 {
+                    genes.push(Gene(rng.gen_range(0..32), rng.gen_range(0..32), rng.gen_range(0..32), rng.gen_range(0..32)))
+                } 
 
-#[derive(Debug)]
-pub struct Gene (i32, i32, i32, i32);
+                let first_shoot = Cell {
+                    cell_type: CellType::Shoot,
+                    gene: 0,
+                    coord: Coord(x, 0)
+                };
 
-#[derive(Debug)]
-pub struct Genome {
-    genes: Vec<Gene>
-}
-#[derive(Debug)]
-pub struct FallingSeed {
-    genome: Genome,
-    coord: Coord
-}
-#[derive(Debug)]
-pub struct Cell {
-    cell_type: CellType,
-    gene: u32,
-    coord: Coord
-}
-#[derive(Debug)]
-pub struct Tree {
-    cells: Vec<Cell>,
-    age: i32,
-    energy: i32,
-    genome: Genome
+                let new_tree = Tree {
+                    cells: vec![first_shoot],
+                    age: rng.gen_range(88..93),
+                    energy: 0,
+                    genome: Genome { genes },
+                    colour: (rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0))
+                };
+
+                self.trees.push(new_tree);
+            }
+        }
+    }
 }
