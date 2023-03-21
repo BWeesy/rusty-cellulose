@@ -10,7 +10,7 @@ use crate::util::Coord;
 mod genome;
 
 const WORLD_HEIGHT: u32 = 10;
-const WORLD_WIDTH: u32 = 10;
+const WORLD_WIDTH: u32 = 10; 
 const TRANSPARENCY: u32 = 3;
 const MAX_SUN_DEPTH: u32 = 6;
 const GROUND_ENERGY: u32 = 1;
@@ -53,7 +53,6 @@ fn main() {
                     let blue = tree.colour.1;
                     let green = tree.colour.2;
 
-                    println!("{:?}",cell.coord);
                     gc.new_path();
                     gc.rect((x * PIXEL_SIZE) as f32, (y * PIXEL_SIZE) as f32, (x * PIXEL_SIZE + PIXEL_SIZE) as f32, (y * PIXEL_SIZE + PIXEL_SIZE) as f32);
                     gc.fill_color(Color::Rgba(red, blue, green, 1.0));

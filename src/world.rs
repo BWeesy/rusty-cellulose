@@ -39,14 +39,12 @@ impl WorldState {
                     genes.push(Gene(rng.gen_range(0..32), rng.gen_range(0..32), rng.gen_range(0..32), rng.gen_range(0..32)))
                 } 
 
-                let first_shoot = Cell {
-                    cell_type: CellType::Shoot,
-                    gene: 0,
-                    coord: Coord(x, 0)
-                };
-
                 let new_tree = Tree {
-                    cells: vec![first_shoot],
+                    cells: vec![Cell {
+                        cell_type: CellType::Shoot,
+                        gene: 0,
+                        coord: Coord(x, 0)
+                    }],
                     age: rng.gen_range(88..93),
                     energy: 0,
                     genome: Genome { genes },
