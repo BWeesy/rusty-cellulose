@@ -37,10 +37,11 @@ impl WorldState {
 
     fn propogate_trees(&mut self) {
         for mut tree in &mut self.trees[..] {
-            let (next_cells, new_cells) = Tree::propogate(&mut tree, &self.energy_matrix, &self.filled_space);
-            tree.cells = next_cells;
+            let new_cells = Tree::propogate(&mut tree, &self.energy_matrix, &self.filled_space);
+            Tree::branchify_shoots(&mut tree);
             for cell in new_cells {
                 self.filled_space.push(cell.coord);
+                tree.cells.push(cell);
             }
         }
     }
@@ -82,7 +83,7 @@ impl WorldState {
             cells: vec![Cell {
                 cell_type: CellType::Shoot,
                 gene: 0,
-                coord: Coord(5, 0)
+                coord: Coord(self.width/2, 0)
             }],
             age: 90,
             energy: 0,

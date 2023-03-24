@@ -21,26 +21,21 @@ impl Tree {
         })
     }
 
-    pub fn propogate(&mut self, energy_matrix: &Vec<Vec<u32>>, filledspace: &Vec<Coord>) -> (Vec<Cell>, Vec<Cell>) {
-        let mut next_cells = Vec::new();
+    pub fn branchify_shoots(&mut self) {
+        for i in 0..self.cells.len() {
+            if self.cells[i].cell_type == CellType::Shoot {
+                self.cells[i].cell_type = CellType::Branch;
+            }
+        }
+    }
+
+    pub fn propogate(&mut self, energy_matrix: &Vec<Vec<u32>>, filledspace: &Vec<Coord>) -> Vec<Cell> {
         let mut new_cells = Vec::new();
         for cell in &self.cells {
-            if cell.cell_type != CellType::Shoot { 
-                next_cells.push(Cell {
-                    cell_type: cell.cell_type,
-                    gene: cell.gene,
-                    coord: cell.coord,
-                });
-                continue;
-            }
-            next_cells.push(Cell {
-                cell_type: CellType::Branch,
-                gene: cell.gene,
-                coord: cell.coord,
-            });
+            if cell.cell_type != CellType::Shoot { continue; }
             let gene = &self.genome.genes[cell.gene as usize];
             let up_neighbour = Coord(cell.coord.0, cell.coord.1 + 1);
-            if Self::is_allowed_new_space(&up_neighbour, filledspace) {
+            if gene.up < 16 && Self::is_allowed_new_space(&up_neighbour, filledspace) {
                 new_cells.push(Cell {
                     cell_type: CellType::Shoot,
                     gene: gene.up,
@@ -48,7 +43,7 @@ impl Tree {
                 });
             }
             let left_neighbour = Coord(cell.coord.0 - 1, cell.coord.1);
-            if Self::is_allowed_new_space(&left_neighbour, filledspace) {
+            if gene.up < 16 && Self::is_allowed_new_space(&left_neighbour, filledspace) {
                 new_cells.push(Cell {
                     cell_type: CellType::Shoot,
                     gene: gene.left,
@@ -56,7 +51,7 @@ impl Tree {
                 });
             }
             let right_neighbour = Coord(cell.coord.0 + 1, cell.coord.1);
-            if Self::is_allowed_new_space(&right_neighbour, filledspace) {
+            if gene.up < 16 && Self::is_allowed_new_space(&right_neighbour, filledspace) {
                 new_cells.push(Cell {
                     cell_type: CellType::Shoot,
                     gene: gene.right,
@@ -64,7 +59,7 @@ impl Tree {
                 });
             }
             let down_neighbour = Coord(cell.coord.0, cell.coord.1 - 1);
-            if Self::is_allowed_new_space(&down_neighbour, filledspace) {
+            if gene.up < 16 && Self::is_allowed_new_space(&down_neighbour, filledspace) {
                 new_cells.push(Cell {
                     cell_type: CellType::Shoot,
                     gene: gene.down,
@@ -72,14 +67,7 @@ impl Tree {
                 });
             }
         }
-        for new_cell in &new_cells {
-            next_cells.push(Cell {
-                cell_type: new_cell.cell_type,
-                gene: new_cell.gene,
-                coord: new_cell.coord,
-            })
-        };
-        (next_cells, new_cells)
+        new_cells
     }
 
     fn is_allowed_new_space(proposed: &Coord, filledspace: &Vec<Coord>) -> bool {

@@ -13,8 +13,8 @@ mod genome;
 use std::thread;
 use std::time::Duration;
 
-const WORLD_HEIGHT: i32 = 10;
-const WORLD_WIDTH: i32 = 10; 
+const WORLD_HEIGHT: i32 = 100;
+const WORLD_WIDTH: i32 = 100; 
 const TRANSPARENCY: u32 = 3;
 const MAX_SUN_DEPTH: u32 = 6;
 const GROUND_ENERGY: u32 = 1;
