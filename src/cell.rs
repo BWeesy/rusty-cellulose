@@ -7,7 +7,7 @@ pub struct Cell {
     pub coord: Coord
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum CellType {
     Branch,
     Shoot,

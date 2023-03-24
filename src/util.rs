@@ -1,2 +1,2 @@
-#[derive(Debug)]
-pub struct Coord(pub u32, pub u32);
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Coord(pub i32, pub i32);

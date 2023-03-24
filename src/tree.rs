@@ -20,6 +20,83 @@ impl Tree {
             coord: coord
         })
     }
+
+    pub fn propogate(&mut self, energy_matrix: &Vec<Vec<u32>>, filledspace: &Vec<Coord>) -> (Vec<Cell>, Vec<Cell>) {
+        let mut next_cells = Vec::new();
+        let mut new_cells = Vec::new();
+        for cell in &self.cells {
+            if cell.cell_type != CellType::Shoot { 
+                next_cells.push(Cell {
+                    cell_type: cell.cell_type,
+                    gene: cell.gene,
+                    coord: cell.coord,
+                });
+                continue;
+            }
+            next_cells.push(Cell {
+                cell_type: CellType::Branch,
+                gene: cell.gene,
+                coord: cell.coord,
+            });
+            let gene = &self.genome.genes[cell.gene as usize];
+            let up_neighbour = Coord(cell.coord.0, cell.coord.1 + 1);
+            if Self::is_allowed_new_space(&up_neighbour, filledspace) {
+                new_cells.push(Cell {
+                    cell_type: CellType::Shoot,
+                    gene: gene.up,
+                    coord: up_neighbour
+                });
+            }
+            let left_neighbour = Coord(cell.coord.0 - 1, cell.coord.1);
+            if Self::is_allowed_new_space(&left_neighbour, filledspace) {
+                new_cells.push(Cell {
+                    cell_type: CellType::Shoot,
+                    gene: gene.left,
+                    coord: left_neighbour
+                });
+            }
+            let right_neighbour = Coord(cell.coord.0 + 1, cell.coord.1);
+            if Self::is_allowed_new_space(&right_neighbour, filledspace) {
+                new_cells.push(Cell {
+                    cell_type: CellType::Shoot,
+                    gene: gene.right,
+                    coord: right_neighbour
+                });
+            }
+            let down_neighbour = Coord(cell.coord.0, cell.coord.1 - 1);
+            if Self::is_allowed_new_space(&down_neighbour, filledspace) {
+                new_cells.push(Cell {
+                    cell_type: CellType::Shoot,
+                    gene: gene.down,
+                    coord: down_neighbour
+                });
+            }
+        }
+        for new_cell in &new_cells {
+            next_cells.push(Cell {
+                cell_type: new_cell.cell_type,
+                gene: new_cell.gene,
+                coord: new_cell.coord,
+            })
+        };
+        (next_cells, new_cells)
+    }
+
+    fn is_allowed_new_space(proposed: &Coord, filledspace: &Vec<Coord>) -> bool {
+        Self::is_space_empty(proposed, filledspace) && Self::does_space_exist(proposed)
+    }
+
+    fn is_space_empty(proposed: &Coord, filledspace: &Vec<Coord>) -> bool {
+        !filledspace.contains(proposed)
+    }
+
+    fn does_space_exist(proposed: &Coord) -> bool {
+        if proposed.0 < 0 || proposed.1 < 0 {
+            return false
+        }
+
+        true
+    }
 }
 
 #[derive(Debug)]
